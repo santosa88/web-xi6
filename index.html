@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>XI 6 - Stop Cyberbullying</title>
+  
+  <!-- Font Modern (Poppins) -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style> body { font-family: 'Poppins', sans-serif; scroll-behavior: smooth; } </style>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- React & ReactDOM -->
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Babel untuk menerjemahkan JSX -->
+  <script crossorigin src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState } = React;
+
+    function App() {
+      const [isDarkMode, setIsDarkMode] = useState(true);
+      const [searchTerm, setSearchTerm] = useState("");
+      const [showReportMenu, setShowReportMenu] = useState(false);
+      
+      // State Form Pesan
+      const [messages, setMessages] = useState([
+        { name: "Siswa XI 6", text: "Mari kita buat lingkungan kelas yang positif dan bebas bullying!" }
+      ]);
+      const [formName, setFormName] = useState("");
+      const [formText, setFormText] = useState("");
+      const [formError, setFormError] = useState("");
+
+      // Data Pengurus
+      const waliKelas = "Ibu Anik Tataria";
+      const pengurus = [
+        { jabatan: "Ketua Kelas", nama: "Muhammad Hafiz Aryo Nugroho" },
+        { jabatan: "Wakil Ketua", nama: "Aufa Akmal Syukri" },
+        { jabatan: "Sekretaris", nama: "Chalista Ensa Wahidah & Vinza Rifani Salsabila" }
+      ];
+
+      // Data Lengkap 35 Siswa Kelas XI 6
+      const students = [
+        { absen: 1, nama: "Akmal Sandy Hibatullah", jabatan: "" },
+        { absen: 2, nama: "Annisa Khiara Kaffa", jabatan: "" },
+        { absen: 3, nama: "Aufa Akmal Syukri", jabatan: "Wakil Ketua" },
+        { absen: 4, nama: "Ayra Tyas Ramadhani", jabatan: "" },
+        { absen: 5, nama: "Azmah Afifah Arif", jabatan: "" },
+        { absen: 6, nama: "Chalista Ensa Wahidah", jabatan: "Sekretaris" },
+        { absen: 7, nama: "Deril Putra Nindra Permana", jabatan: "" },
+        { absen: 8, nama: "Dhea Putri Nur Agustin", jabatan: "" },
+        { absen: 9, nama: "Fahri Febrian Dinata", jabatan: "" },
+        { absen: 10, nama: "Fajar Satrio Nugroho", jabatan: "" },
+        { absen: 11, nama: "Fauzan Dheffa Oktavian", jabatan: "" },
+        { absen: 12, nama: "Fauzi Akbar Rivai", jabatan: "" },
+        { absen: 13, nama: "Felysha Nila Aribah", jabatan: "" },
+        { absen: 14, nama: "Galang Candra Musyaffa", jabatan: "" },
+        { absen: 15, nama: "Hasnandyo Hapamungkas Cokroadhisurya", jabatan: "" },
+        { absen: 16, nama: "Ilham Windra Nurrohman", jabatan: "" },
+        { absen: 17, nama: "Indah Octavia Pratama", jabatan: "" },
+        { absen: 18, nama: "Lintang Javas Sinathrya", jabatan: "" },
+        { absen: 19, nama: "Muhammad Bagas Adi Syaputra", jabatan: "" },
+        { absen: 20, nama: "Muhammad Hafiz Aryo Nugroho", jabatan: "Ketua Kelas" },
+        { absen: 21, nama: "Muhammad Nur Aziz", jabatan: "" },
+        { absen: 22, nama: "Nadya Maylani Putri", jabatan: "" },
+        { absen: 23, nama: "Naresh Pranav Ventura", jabatan: "" },
+        { absen: 24, nama: "Nazwatul Aulia", jabatan: "" },
+        { absen: 25, nama: "Novi Bintang Pertiwi", jabatan: "" },
+        { absen: 26, nama: "Rafa' Nafisah", jabatan: "" },
+        { absen: 27, nama: "Reihan Arya Efendi", jabatan: "" },
+        { absen: 28, nama: "Reina Setya Maharani", jabatan: "" },
+        { absen: 29, nama: "Salwa Ayu Cahyani", jabatan: "" },
+        { absen: 30, nama: "Santosa Wijaya", jabatan: "" },
+        { absen: 31, nama: "Soraya Malika Ramadani", jabatan: "" },
+        { absen: 32, nama: "Tians Adhi Wira Pratama", jabatan: "" },
+        { absen: 33, nama: "Vinza Rifani Salsabila", jabatan: "Sekretaris" },
+        { absen: 34, nama: "Viorentina Putri", jabatan: "" },
+        { absen: 35, nama: "Wahyu Aiman Anugerah Widi", jabatan: "" }
+      ];
+
+      const filteredStudents = students.filter(s => 
+        s.nama.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        s.absen.toString() === searchTerm.trim()
+      );
+
+      const handleSendMessage = (e) => {
+        e.preventDefault();
+        if (formName.trim().length < 3 || formText.trim().length < 5) {
+          setFormError("Nama minimal 3 karakter dan Pesan minimal 5 karakter.");
+          return;
+        }
+        setMessages([{ name: formName, text: formText }, ...messages]);
+        setFormName("");
+        setFormText("");
+        setFormError("");
+      };
+
+      // Tema Warna Dinamis
+      const themeBg = isDarkMode ? "bg-slate-900 text-slate-100" : "bg-gray-50 text-slate-800";
+      const cardBg = isDarkMode ? "bg-slate-800/80 border-slate-700 text-white" : "bg-white border-gray-200 text-slate-800";
+      const textAccent = isDarkMode ? "text-blue-400" : "text-blue-600";
+      const glassEffect = isDarkMode ? "bg-slate-900/70 backdrop-blur-md border-b border-slate-800" : "bg-white/80 backdrop-blur-md border-b border-gray-200";
+
+      return (
+        <div className={`min-h-screen transition-colors duration-300 ${themeBg}`}>
+          
+          {/* Navbar dengan Logo Kelas di Kiri Atas */}
+          <nav className={`fixed w-full z-50 ${glassEffect} p-4 transition-colors`}>
+            <div className="max-w-6xl mx-auto flex justify-between items-center">
+              <a href="#" className="flex items-center gap-3">
+                <img 
+                  src="logo-kelas.jpeg" 
+                  alt="Logo Valterra XI 6" 
+                  className="w-9 h-9 rounded-full object-cover border border-purple-500 shadow-sm"
+                />
+                <span className="font-bold text-xl tracking-wider">
+                  <span className="text-purple-500">XI</span> 6
+                </span>
+              </a>
+              <div className="flex items-center gap-4 text-sm md:text-base">
+                <a href="#profil" className="hover:text-purple-500 transition">Profil</a>
+                <a href="#anggota" className="hover:text-purple-500 transition">Anggota</a>
+                <a href="#edukasi" className="hover:text-purple-500 transition">Edukasi</a>
+                <a href="#kampanye" className="hover:text-purple-500 transition">Kampanye</a>
+                <button onClick={() => setIsDarkMode(!isDarkMode)} className="p-2 rounded-full hover:bg-slate-700/20 transition" aria-label="Ganti Tema">
+                  {isDarkMode ? "☀️" : "🌙"}
+                </button>
+              </div>
+            </div>
+          </nav>
+
+          {/* Hero Section dengan Logo Kelas Utama di Atas Judul */}
+          <section className="pt-32 pb-20 px-6 text-center">
+            <div className="mb-6 flex justify-center">
+              <div className="p-1.5 rounded-full bg-gradient-to-tr from-blue-500 via-purple-500 to-pink-500 shadow-[0_0_25px_rgba(168,85,247,0.45)]">
+                <img 
+                  src="logo-kelas.jpeg" 
+                  alt="Lambang Kelas Valterra 271" 
+                  className="w-28 h-28 md:w-36 md:h-36 rounded-full object-cover bg-slate-900"
+                />
+              </div>
+            </div>
+
+            <h2 className="text-5xl md:text-7xl font-bold mb-4 bg-gradient-to-r from-blue-400 via-purple-500 to-pink-500 text-transparent bg-clip-text">
+              WELCOME TO XI 6
+            </h2>
+            <p className="text-xl md:text-2xl font-light mb-8 italic">"Different Minds, One Family, Zero Bullying"</p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <a href="#profil" className="px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium transition shadow-[0_0_15px_rgba(37,99,235,0.5)]">
+                Jelajahi Kelas
+              </a>
+              <a href="#edukasi" className="px-6 py-3 rounded-full border border-purple-500 text-purple-500 hover:bg-purple-500 hover:text-white font-medium transition">
+                Kenali Cyberbullying
+              </a>
+            </div>
+          </section>
+
+          {/* Profil Kelas & Pengurus */}
+          <section id="profil" className="py-16 px-6 max-w-6xl mx-auto">
+            <h3 className={`text-3xl font-bold text-center mb-12 ${textAccent}`}>Profil Organisasi Kelas</h3>
+            <div className="text-center mb-10">
+              <p className="text-sm uppercase tracking-widest opacity-70 mb-1">Wali Kelas</p>
+              <h4 className="text-2xl font-semibold">{waliKelas}</h4>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {pengurus.map((p, idx) => (
+                <div key={idx} className={`p-6 rounded-2xl border ${cardBg} hover:-translate-y-2 transition transform duration-300 shadow-lg text-center`}>
+                  <p className="text-sm font-semibold text-purple-400 uppercase tracking-widest mb-2">{p.jabatan}</p>
+                  <h4 className="text-lg font-medium">{p.nama}</h4>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Anggota Kelas & Search */}
+          <section id="anggota" className="py-16 px-6 max-w-6xl mx-auto">
+            <h3 className={`text-3xl font-bold text-center mb-3 ${textAccent}`}>Anggota Kelas XI 6</h3>
+            <p className="text-center opacity-70 mb-8">Total 35 Siswa</p>
+            <div className="max-w-md mx-auto mb-10">
+              <input 
+                type="text" 
+                placeholder="Cari nama atau nomor absen..." 
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className={`w-full p-4 rounded-xl border focus:outline-none focus:ring-2 focus:ring-purple-500 transition ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-300'}`}
+              />
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {filteredStudents.map((siswa) => (
+                <div key={siswa.absen} className={`p-4 rounded-xl border ${cardBg} flex items-center gap-3 hover:border-purple-500 hover:-translate-y-1 transition duration-200 cursor-default`}>
+                  <div className="w-10 h-10 shrink-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm">
+                    {siswa.absen}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="text-sm font-medium leading-snug break-words">{siswa.nama}</p>
+                    {siswa.jabatan && (
+                      <span className="inline-block mt-1 px-2 py-0.5 text-[11px] font-semibold rounded-full bg-purple-500/20 text-purple-400">
+                        {siswa.jabatan}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+            {filteredStudents.length === 0 && (
+              <p className="text-center opacity-60 mt-6">Nama siswa tidak ditemukan.</p>
+            )}
+          </section>
+
+          {/* Edukasi Cyberbullying */}
+          <section id="edukasi" className={`py-16 px-6 ${isDarkMode ? 'bg-slate-800/50' : 'bg-gray-100'}`}>
+            <div className="max-w-6xl mx-auto">
+              <h3 className="text-3xl font-bold text-center mb-12 text-red-500">STOP CYBERBULLYING</h3>
+              <div className="grid md:grid-cols-2 gap-8">
+                <div className={`p-8 rounded-2xl border ${cardBg}`}>
+                  <h4 className="text-xl font-bold mb-4 text-blue-400">Apa itu Cyberbullying?</h4>
+                  <p className="opacity-80 leading-relaxed mb-4">Perundungan di dunia digital berupa hinaan, ancaman, penyebaran rumor, atau tindakan mengucilkan seseorang melalui media sosial, game, atau pesan teks.</p>
+                  <h4 className="font-bold mb-2">Dampak bagi Korban:</h4>
+                  <ul className="list-disc list-inside opacity-80 space-y-1">
+                    <li>Depresi dan kecemasan</li>
+                    <li>Kehilangan rasa percaya diri</li>
+                    <li>Prestasi akademik menurun</li>
+                  </ul>
+                </div>
+                <div className={`p-8 rounded-2xl border ${cardBg}`}>
+                  <h4 className="text-xl font-bold mb-4 text-purple-400">Cara Mencegah & Menghadapi</h4>
+                  <ul className="space-y-3 opacity-80">
+                    <li className="flex gap-2"><span>🛡️</span> Jangan langsung merespons dengan emosi.</li>
+                    <li className="flex gap-2"><span>📸</span> Simpan bukti (screenshot) percakapan/postingan.</li>
+                    <li className="flex gap-2"><span>🚫</span> Blokir dan laporkan akun pelaku di platform terkait.</li>
+                    <li className="flex gap-2"><span>🗣️</span> Ceritakan kepada orang dewasa yang dipercaya (orang tua/guru).</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          {/* Kampanye & Tombol Lapor Interaktif */}
+          <section id="kampanye" className="py-20 px-6 text-center">
+            <div className="max-w-3xl mx-auto">
+              <h3 className="text-4xl font-black mb-6">Think Before You Type!</h3>
+              <p className="text-lg opacity-80 mb-8">"Your Words Can Heal, Not Hurt. Be a Hero, Not a Hater."</p>
+              
+              {/* Dropdown Menu Laporkan */}
+              <div className="relative inline-block text-left">
+                <button 
+                  onClick={() => setShowReportMenu(!showReportMenu)}
+                  className="px-8 py-4 rounded-full bg-red-600 hover:bg-red-700 text-white font-bold text-lg transition flex items-center gap-2 mx-auto shadow-[0_0_20px_rgba(220,38,38,0.5)]"
+                >
+                  Laporkan Sekarang
+                  <svg className={`w-5 h-5 transition-transform duration-300 ${showReportMenu ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </button>
+                
+                {/* Isi Dropdown */}
+                {showReportMenu && (
+                  <div className={`absolute left-1/2 transform -translate-x-1/2 mt-3 w-56 rounded-xl shadow-2xl border overflow-hidden z-10 ${isDarkMode ? 'bg-slate-800 border-slate-700' : 'bg-white border-gray-200'}`}>
+                    <div className="py-1">
+                      <a href="#pesan" onClick={() => setShowReportMenu(false)} className="block px-4 py-3 text-sm hover:bg-red-500 hover:text-white transition">Lapor Wali Kelas</a>
+                      <a href="#pesan" onClick={() => setShowReportMenu(false)} className="block px-4 py-3 text-sm hover:bg-red-500 hover:text-white transition">Lapor Guru BK</a>
+                      <a href="#edukasi" onClick={() => setShowReportMenu(false)} className="block px-4 py-3 text-sm hover:bg-red-500 hover:text-white transition">Panduan Melapor</a>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+            </div>
+          </section>
+
+          {/* Pesan & Kesan */}
+          <section id="pesan" className="py-16 px-6 max-w-4xl mx-auto">
+            <h3 className={`text-3xl font-bold text-center mb-8 ${textAccent}`}>Pesan Positif Kelas</h3>
+            
+            <form onSubmit={handleSendMessage} className={`p-6 rounded-2xl border mb-10 ${cardBg}`}>
+              <div className="mb-4">
+                <input type="text" placeholder="Nama Kamu" value={formName} onChange={e => setFormName(e.target.value)}
+                  className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-300'}`} />
+              </div>
+              <div className="mb-4">
+                <textarea placeholder="Tulis pesan positif untuk teman-teman..." value={formText} onChange={e => setFormText(e.target.value)} rows="3"
+                  className={`w-full p-3 rounded-lg border focus:outline-none focus:ring-2 focus:ring-blue-500 ${isDarkMode ? 'bg-slate-700 border-slate-600' : 'bg-gray-50 border-gray-300'}`}></textarea>
+              </div>
+              
+              {formError && (
+                <div className="mb-4 p-3 bg-red-500/20 border border-red-500 text-red-500 text-sm rounded-lg">
+                  ⚠️ {formError}
+                </div>
+              )}
+              
+              <button type="submit" className="w-full py-3 rounded-lg bg-blue-600 hover:bg-blue-700 text-white font-bold transition">
+                Kirim Pesan
+              </button>
+            </form>
+
+            <div className="space-y-4">
+              {messages.map((msg, i) => (
+                <div key={i} className={`p-4 rounded-xl border border-l-4 border-l-purple-500 ${cardBg}`}>
+                  <h5 className="font-bold text-sm mb-1">{msg.name}</h5>
+                  <p className="opacity-90">{msg.text}</p>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          {/* Footer, Sosial Media (Instagram & TikTok), dan Kredit Pembuat */}
+          <footer className={`py-10 px-6 text-center border-t mt-10 ${isDarkMode ? 'border-slate-800' : 'border-gray-200'}`}>
+            <h3 className="font-bold text-xl mb-4">Let's Connect</h3>
+            
+            {/* Ikon Instagram dan TikTok Berdampingan */}
+            <div className="flex justify-center items-center gap-6 mb-6">
+              {/* Instagram */}
+              <a 
+                href="https://www.instagram.com/valterra.271?srtk=bzB4bTdqeTJvZjh" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-pink-500 transition-all duration-300 transform hover:scale-110"
+                aria-label="Kunjungi Instagram Kelas XI 6"
+                title="Instagram @valterra.271"
+              >
+                <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
+                  <path fillRule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.45 2.525c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" clipRule="evenodd" />
+                </svg>
+              </a>
+
+              {/* TikTok */}
+              <a 
+                href="https://www.tiktok.com/@valterra.271?_r=1&_t=ZS-9BTSNeuaJRI" 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="text-gray-400 hover:text-cyan-400 transition-all duration-300 transform hover:scale-110"
+                aria-label="Kunjungi TikTok Kelas XI 6"
+                title="TikTok @valterra.271"
+              >
+                <svg className="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-5.2 1.74 2.89 2.89 0 0 1 2.31-4.64 2.93 2.93 0 0 1 .88.13V9.4a6.84 6.84 0 0 0-1-.05A6.33 6.33 0 0 0 5 20.1a6.34 6.34 0 0 0 10.86-4.43v-7a8.16 8.16 0 0 0 4.77 1.52v-3.4a4.85 4.85 0 0 1-1-.1z"/>
+                </svg>
+              </a>
+            </div>
+
+            <p className="text-sm opacity-60">© 2026 XI 6 CLASS WEBSITE</p>
+            <p className="text-sm opacity-60">Together We Stand, Together We Respect.</p>
+            <p className="text-sm opacity-60 mt-2 font-medium">Stop Cyberbullying, Start Spreading Kindness.</p>
+            
+            {/* Kredit Nama Pembuat */}
+            <p className="text-xs opacity-75 mt-4 text-purple-400 font-medium">
+              Created by Santosa Wijaya & Fajar Satrio Nugroho
+            </p>
+          </footer>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
